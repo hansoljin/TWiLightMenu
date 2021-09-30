@@ -30,6 +30,8 @@
 #include <nds.h>
 #include <maxmod7.h>
 
+#include "sndcommon.h"
+
 #define REG_SCFG_WL *(vu16*)0x4004020
 
 void my_touchInit();
@@ -120,6 +122,7 @@ int main() {
 	
 	installSoundFIFO();
 	my_installSystemFIFO();
+	InstallSoundSys(); // SSEQ
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);

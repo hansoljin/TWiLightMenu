@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 TARGET		:=	settings
 BUILD		:=	build
 SOURCES		:=	source ../../universal/arm7/source ../../universal/sdmmc/arm7/source
-INCLUDES	:=	include build ../../universal/arm7/include ../../universal/sdmmc/arm7/include
+INCLUDES	:=	include build ../../universal/arm7/include ../../universal/sdmmc/arm7/include ../../universal/sound
 
 #---------------------------------------------------------------------------------
 # options for code generation

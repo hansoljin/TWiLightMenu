@@ -34,6 +34,8 @@
 #include "common/systemdetails.h"
 #include "myDSiMode.h"
 
+#include "sndcommon.h"
+
 #define DSI_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/dsimenu/themes/"
 #define _3DS_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/3dsmenu/themes/"
 
@@ -788,6 +790,7 @@ int main(int argc, char **argv)
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
+	InstallSoundSys();
 	graphicsInit();
 	fontInit();
 	langInit();
@@ -1390,7 +1393,8 @@ int main(int argc, char **argv)
 	{
 		if (!gui().isExited())
 		{
-			snd().playBgMusic(ms().settingsMusic);
+			//snd().playBgMusic(ms().settingsMusic);
+			PlaySeq("nitro:/sound/TWL_SETTING_BGM.sseq", "nitro:/sound/BANK_SETTING_BGM.sbnk", "nitro:/sound/WAVE_BGM.swar", NULL, NULL, NULL);
 		}
 
 		gui().draw();

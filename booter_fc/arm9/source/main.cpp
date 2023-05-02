@@ -33,6 +33,11 @@
 #include "nds_loader_arm9.h"
 #include "common/tonccpy.h"
 
+#ifdef DSTT
+#include "ttio_dldi_bin.h"
+#include "ttio_sdhc_dldi_bin.h"
+#endif
+
 using namespace std;
 
 //---------------------------------------------------------------------------------
@@ -59,6 +64,17 @@ int main(int argc, char **argv) {
 	bool isRegularDS = fifoGetValue32(FIFO_USER_07);
 
 	//iprintf("Initing flashcard...\n");
+
+#ifdef DSTT
+	// HACK
+	DLDI_INTERFACE* ptr_io_dldi_data = (DLDI_INTERFACE*)io_dldi_data;
+
+	// rewrite builtin DLDI based on SD or SDHC
+	if(*(u32*)0x02FFFC24 == 0) tonccpy(ptr_io_dldi_data, ttio_dldi_bin, ttio_dldi_bin_size);
+	else tonccpy(ptr_io_dldi_data, ttio_sdhc_dldi_bin, ttio_sdhc_dldi_bin_size);
+	dldiFixDriverAddresses(ptr_io_dldi_data);
+#endif // DSTT
+
 	bool flashcardFound = fatMountSimple("fat", dldiGetInternal());
 	if (isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) {
 		extern const DISC_INTERFACE __my_io_dsisd;

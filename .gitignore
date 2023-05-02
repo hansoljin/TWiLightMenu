@@ -26,6 +26,7 @@ settings/arm9/include/version.h
 # Build Directory
 build/
 data/
+!booter_fc/flashcart_specifics/dstt/arm9/data
 
 # Project Files
 .idea/

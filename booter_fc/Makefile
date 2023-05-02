@@ -23,7 +23,7 @@ export TARGET := booter
 
 include $(DEVKITARM)/ds_rules
 
-.PHONY: bootloader bootstub clean makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_acekard2 makearm9_r4idsn
+.PHONY: bootloader bootstub clean makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_dstt makearm9_acekard2 makearm9_r4idsn
 
 all:	bootloader bootstub $(TARGET).nds
 
@@ -43,6 +43,10 @@ makearm9_r4ig:
 	$(MAKE) -C flashcart_specifics/r4ig/arm9
 	cp flashcart_specifics/r4ig/arm9/$(TARGET).elf $(TARGET)_r4ig.arm9.elf
 
+makearm9_dstt:
+	$(MAKE) -C flashcart_specifics/dstt/arm9
+	cp flashcart_specifics/dstt/arm9/$(TARGET).elf $(TARGET)_dstt.arm9.elf
+
 makearm9_acekard2:
 	$(MAKE) -C flashcart_specifics/address_adapt/arm9 CRT0=0x02000450
 	cp flashcart_specifics/address_adapt/arm9/$(TARGET).elf $(TARGET)_acekard2.arm9.elf
@@ -60,6 +64,7 @@ dist:	all autoboot
 	@cp $(TARGET)_fc.arm9.elf ../7zfile/debug/$(TARGET)_fc.arm9.elf
 	@cp $(TARGET)_r4ils.arm7.elf ../7zfile/debug/$(TARGET)_r4ils.arm7.elf
 	@cp $(TARGET)_r4ig.arm9.elf ../7zfile/debug/$(TARGET)_r4ig.arm9.elf
+	@cp $(TARGET)_dstt.arm9.elf ../7zfile/debug/$(TARGET)_dstt.arm9.elf
 	@cp $(TARGET)_acekard2.arm9.elf ../7zfile/debug/$(TARGET)_acekard2.arm9.elf
 	@cp $(TARGET)_r4idsn.arm9.elf ../7zfile/debug/$(TARGET)_r4idsn.arm9.elf
 
@@ -201,8 +206,7 @@ autoboot:
 	mv bootme.nds "../7zfile/Flashcard users/Autoboot/Games N Music/Non-SDHC/bootme.nds"
 
 	#### DSTT and its (many) clones
-	cp booter_acekard2.nds TTMenu.dat
-	dlditool flashcart_specifics/DLDI/ttio_sdhc.dldi TTMenu.dat
+	cp booter_dstt.nds TTMenu.dat
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/TTMenu.dat"
@@ -259,13 +263,14 @@ autoboot:
 	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
 
 
-$(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_acekard2 makearm9_r4idsn
+$(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_dstt makearm9_acekard2 makearm9_r4idsn
 	# simple nds srl without dsi extended header
 	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	ndstool -c $(TARGET)_r4ig.nds     -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_r4ig.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	ndstool -c $(TARGET)_r4idsn.nds   -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_r4idsn.arm9.elf   -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	ndstool -c $(TARGET)_acekard2.nds -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	ndstool -c $(TARGET)_r4ils.nds    -7 $(TARGET)_r4ils.arm7.elf -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_dstt.nds     -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_dstt.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	
 
 clean:
@@ -277,10 +282,12 @@ clean:
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
 	@rm -fr $(TARGET)_acekard2.nds $(TARGET)_acekard2.arm9.elf
 	@rm -fr $(TARGET)_r4ils.nds $(TARGET)_r4ils.arm7.elf
+	@rm -fr $(TARGET)_dstt.nds $(TARGET)_dstt.arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C $(PROJECT)/universal/bootstub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C flashcart_specifics/r4ig/arm9 clean
+	@$(MAKE) -C flashcart_specifics/dstt/arm9 clean
 	@$(MAKE) -C flashcart_specifics/r4ils/arm7 clean
 	@$(MAKE) -C arm7 clean
 	# echo Cleaning Flashcart Autobooters
